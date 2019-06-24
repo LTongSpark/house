@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
-from scrapy_redis.spiders import RedisCrawlSpider
 import re
-
 from house.items import HouseItem,esfHouseItem
 
 
@@ -13,11 +10,9 @@ class HomeSpider(CrawlSpider):
     allowed_domains = ['fang.com']
     start_urls = ['https://www.fang.com/SoufunFamily.htm']
     #redis_key = "house"
-
     rules = (
         #匹配全国的地址
         Rule(LinkExtractor(restrict_xpaths=("//div[@class='onCont']//tr",)),follow=True),
-
         #匹配新房
         Rule(LinkExtractor(restrict_xpaths=("//div[@track-id='newhouse']//div[@class='s4Box']",)),follow=True),
         Rule(LinkExtractor(restrict_xpaths=("//div[@class='nlcd_name']/a",)),callback='parse_newhouse'),
@@ -56,9 +51,9 @@ class HomeSpider(CrawlSpider):
             project_addr = project_addr,
             open_time = open_time
         )
+        print("tong" ,nlcd_name)
         yield item
         def parse_tail(self, response):
-
             item1 = {}
             item1["area"] = response.xpath(
             "//div[@class='screen_al']//ul[contains(@class,'choose_screen ')]/li/a/text()").get()

@@ -7,6 +7,7 @@
 
 from scrapy import signals
 import random
+import requests
 class HouseSpiderUserAgentMiddleware:
     def __init__(self):
         self.agents = [
@@ -75,4 +76,15 @@ class HouseSpiderUserAgentMiddleware:
         ]
 
     def process_repuest(self, request, spider):
+        PROXY_POOL_URL = 'http://localhost:5555/random'
+        try:
+            response = requests.get(PROXY_POOL_URL)
+            if response.status_code == 200:
+                return response.text
+        except ConnectionError:
+            return None
+        request.meta['proxy'] = 'http://' + response
         request.headers["User-Agent"] = random.choice(self.agents)
+        print(PROXY_POOL_URL)
+        print(random.choice(self.agents))
+
